@@ -1,0 +1,19 @@
+{
+  "name": "handmik-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/AndreyKomin/handmik-backend.git"
+  },
+  "author": "Andrey K.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/AndreyKomin/handmik-backend/issues"
+  },
+  "homepage": "https://gitlab.com/AndreyKomin/handmik-backend#readme"
+}
