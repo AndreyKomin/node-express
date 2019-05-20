@@ -13,11 +13,19 @@ function authInstagramUser(code, options) {
     'e9d7bae46309404b8c79d3695ae5fee8',
     'https://api.instagram.com');
 
-
   return new Promise(
-    (resolve) => {
-      oauth2.getOAuthAccessToken(code, options, resolve);
-    }
+    (resolve, reject) => {
+      oauth2.getOAuthAccessToken(
+        code,
+        options,
+        (e, accessToken, refreshToken, response) => {
+          if (e) {
+            reject(e)
+          }
+
+          resolve({ e, accessToken, refreshToken, response })
+      });
+    },
   )
 }
 
@@ -31,10 +39,9 @@ export default function(code, redirectUri) {
 
   return new Promise((resolve) => {
 
-    authInstagramUser(code, options).then((e, accessToken, refreshToken, { user }) => {
+    authInstagramUser(code, options).then(({e, accessToken, refreshToken, response}) => {
 
-
-      console.log("!!!" + accessToken)
+      const { user } = response;
 
       const localUser = models.User.findOrCreate(
         {
