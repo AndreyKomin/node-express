@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import OAuth from 'oauth';
-
 import models from 'db/models';
-import { TOKEN_SECRET } from 'src/config';
 
+const { TOKEN_SECRET } = process.env;
+const { User } = models;
 
 function authInstagramUser(code, options) {
   const { OAuth2 } = OAuth;
@@ -40,17 +40,21 @@ export default async function (code, redirectUri) {
 
   const {
     error,
-    accessToken,
-    refreshToken,
+    // accessToken,
+    // refreshToken,
     response,
   } = await authInstagramUser(code, options);
 
   const { user } = response;
 
+  if (!error) {
+    return Promise.reject(error);
+  }
+
   const [
     userData,
     created,
-  ] = await models.User.findOrCreate(
+  ] = await User.findOrCreate(
     {
       where: {
         instagramId: user.id,
@@ -77,4 +81,6 @@ export default async function (code, redirectUri) {
       },
     };
   }
+
+  return Promise.reject();
 }

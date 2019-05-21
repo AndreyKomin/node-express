@@ -1,4 +1,5 @@
 import 'src/apps/auth/services/checkAuth';
+import routes from './router';
 
 require('dotenv').config();
 // const cluster = require('express-cluster');
@@ -13,7 +14,6 @@ const cors = require('cors');
 const { printIp, handleAsyncExceptions } = require('./util');
 
 const config = require('../config/server');
-const routes = require('./router');
 
 function run() {
   const app = express();
@@ -47,9 +47,11 @@ function run() {
       app.use('/api/v1', routes);
 
       // mount server cluster
+      /*
       cluster(worker => app.listen(config.port, config.host, () => {
         console.log(`worker ${worker.id} online`);
       }));
+      */
       break;
 
     default:

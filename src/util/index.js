@@ -2,7 +2,9 @@ const os = require('os');
 const crypto = require('crypto');
 
 // const {emailConfiguration} = require('config');
-// const mailgun = require('mailgun-js')({apiKey: emailConfiguration.api, domain: emailConfiguration.domain});
+// const mailgun = require('mailgun-js')(
+// {apiKey: emailConfiguration.api, domain: emailConfiguration.domain}
+// );
 
 // something to print ip wherever
 function printIp() {
@@ -69,20 +71,17 @@ function batchReduce(items, batchSize = 10, op) {
 //   });
 // }
 
-async function createPassword(length, chars) {
-  if (!chars) {
-    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  }
+async function createPassword(length, chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') {
   return new Promise((resolve, reject) => {
     const charsLength = chars.length;
     if (charsLength > 256) {
-      reject('parm chars length greater than 256 characters'
-        + ' masks desired key unpredictability');
+      reject(new Error('parm chars length greater than 256 characters'
+        + ' masks desired key unpredictability'));
     }
     const randomBytes = crypto.randomBytes(length);
     const result = new Array(length);
     let cursor = 0;
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < length; i += 1) {
       cursor += randomBytes[i];
       result[i] = chars[cursor % charsLength];
     }

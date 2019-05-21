@@ -1,8 +1,9 @@
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import { TOKEN_SECRET } from 'src/config';
 
 const BearerStrategy = require('passport-http-bearer').Strategy;
+
+const { TOKEN_SECRET } = process.env;
 
 passport.use(new BearerStrategy(
   ((token, done) => {

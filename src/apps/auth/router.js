@@ -1,6 +1,7 @@
+import express from 'express';
 import { instagramAuth } from './services';
 
-const app = module.exports = require('express')();
+const app = express();
 
 app.post('/instagram', async (req, res) => {
   const { code, redirectUri } = req.body;
@@ -12,6 +13,8 @@ app.post('/instagram', async (req, res) => {
     res.send({ error: e });
   }
 });
+
+export default app;
 
 /*
 const {omit} = require('lodash');
