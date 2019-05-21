@@ -8,8 +8,8 @@ import {TOKEN_SECRET} from "src/config";
 function authInstagramUser(code, options) {
   const OAuth2 = OAuth.OAuth2;
   const oauth2 = new OAuth2(
-    '140ed0f3bb91485fbed75a12db407450',
-    'e9d7bae46309404b8c79d3695ae5fee8',
+    process.env.INSTAGRAM_CLIENT_ID,
+    process.env.INSTAGRAM_CLIENT_SECRET,
     'https://api.instagram.com');
 
   return new Promise(
