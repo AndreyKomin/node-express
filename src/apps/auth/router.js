@@ -1,9 +1,9 @@
+import { instagramAuth } from './services';
+
 const app = module.exports = require('express')();
 
-import { instagramAuth } from './services'
-
 app.post('/instagram', async (req, res) => {
-  const {code, redirectUri} = req.body;
+  const { code, redirectUri } = req.body;
 
   try {
     const response = await instagramAuth(code, redirectUri);

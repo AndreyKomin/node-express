@@ -1,17 +1,16 @@
-import passport from "passport";
+import passport from 'passport';
 
 export default (req, res, next) => {
-  passport.authenticate('bearer', {session: false}, function (err, user, info) {
+  passport.authenticate('bearer', { session: false }, (err, user, info) => {
     if (err) {
-      return res.json({ error: info.message || 'Invalid Token' })
+      return res.json({ error: info.message || 'Invalid Token' });
     }
 
-    //authentication error
+    // authentication error
     if (!user) {
-      return res.json({ error: info.message || 'Invalid Token' })
+      return res.json({ error: info.message || 'Invalid Token' });
     }
 
     return next();
-
-  })(req, res, next)
-}
+  })(req, res, next);
+};

@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "pm2 start src/app.js --watch",
-    "start-babel": "pm2 start src/app.js --watch --interpreter ./node_modules/.bin/babel-node"
+    "start-babel": "pm2 start src/app.js --watch --interpreter ./node_modules/.bin/babel-node",
+    "lint": "eslint src"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,14 @@
     "url": "https://gitlab.com/AndreyKomin/handmik-backend/issues"
   },
   "homepage": "https://gitlab.com/AndreyKomin/handmik-backend#readme",
+  "engines": {
+    "node": ">=10.15.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
+  },
   "dependencies": {
     "body-parser": "^1.19.0",
     "config": "^3.1.0",
@@ -26,6 +35,7 @@
     "express": "^4.16.4",
     "helmet": "^3.18.0",
     "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.9.1",
     "oauth": "^0.9.15",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
@@ -38,6 +48,11 @@
     "@babel/core": "^7.4.4",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.4.4",
-    "babel-plugin-module-resolver": "^3.2.0"
+    "babel-plugin-module-resolver": "^3.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "husky": "^2.3.0"
   }
 }

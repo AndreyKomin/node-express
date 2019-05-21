@@ -19,12 +19,12 @@ function printIp() {
 
       if (alias >= 1) {
         // this single interface has multiple ipv4 addresses
-        console.log(ifname + ':' + alias, iface.address);
+        console.log(`${ifname}:${alias}`, iface.address);
       } else {
         // this interface has only one ipv4 adress
         console.log(ifname, iface.address);
       }
-      alias = alias+1;
+      alias += 1;
     });
   });
 }
@@ -42,14 +42,13 @@ function handleAsyncExceptions() {
 
 handleAsyncExceptions.hooked = false;
 
-function batchReduce(items, batchSize=10, op) {
+function batchReduce(items, batchSize = 10, op) {
   const reducer = (i) => {
-    const batch = items.slice(i, i+batchSize);
+    const batch = items.slice(i, i + batchSize);
     if (batch.length > 0) {
-      return op(batch).then(() => reducer(i+batchSize));
-    } else {
-      return Promise.resolve();
+      return op(batch).then(() => reducer(i + batchSize));
     }
+    return Promise.resolve();
   };
 
   return reducer(0);
@@ -77,8 +76,8 @@ async function createPassword(length, chars) {
   return new Promise((resolve, reject) => {
     const charsLength = chars.length;
     if (charsLength > 256) {
-      reject('parm chars length greater than 256 characters' +
-        ' masks desired key unpredictability');
+      reject('parm chars length greater than 256 characters'
+        + ' masks desired key unpredictability');
     }
     const randomBytes = crypto.randomBytes(length);
     const result = new Array(length);
@@ -96,5 +95,5 @@ module.exports = {
   handleAsyncExceptions,
   batchReduce,
   // sendEmail,
-  createPassword
+  createPassword,
 };
