@@ -1,44 +1,18 @@
-import jwt from "jsonwebtoken";
-
 const app = module.exports = require('express')();
 
 import { instagramAuth } from './services'
-import {TOKEN_SECRET} from "../../config";
-
 
 app.post('/instagram', async (req, res) => {
   const {code, redirectUri} = req.body;
 
-  // const response = instagramAuth(code, redirectUri);
-  // console.log(response)
-  // res.send(response);
-
-
-  instagramAuth(code, redirectUri).then(response => {
-    console.log(response)
+  try {
+    const response = await instagramAuth(code, redirectUri);
     res.send(response);
-  });
-
-
+  } catch (e) {
+    res.send({ error: e });
+  }
 });
 
-/*
-.then(([userData, created]) => {
-
-
-    const token = jwt.sign(user, TOKEN_SECRET);
-
-    res.send({
-      accessToken: token,
-      user: {
-        isNew: created,
-        fullName: user.full_name,
-        profilePicture: user.profile_picture
-      }
-    });
-  })
-
-  */
 /*
 const {omit} = require('lodash');
 
