@@ -1,55 +1,15 @@
 import express from 'express';
+import { wrapAsync } from 'src/util';
 import { instagramAuth } from './services';
 
 const app = express();
 
-app.post('/instagram', async (req, res) => {
+app.post('/instagram', wrapAsync(async (req, res) => {
   const { code, redirectUri } = req.body;
 
-  try {
-    const response = await instagramAuth(code, redirectUri);
-    res.send(response);
-  } catch (e) {
-    res.send({ error: e });
-  }
-});
+  const response = await instagramAuth(code, redirectUri);
+
+  res.json(response);
+}));
 
 export default app;
-
-/*
-const {omit} = require('lodash');
-
-const {loggedIn, loggedOut} = require('app/auth');
-
-const {login, logout, refresh, forgetPassword, signup} = require('app/actions').auth;
-
-app.post('/signup', (req, res) => {
-  signup(req.body)
-    .then((user) => res.send({
-      user: omit(user, 'password')
-    }))
-    .catch((err) => {
-      res.status(400).send({msg: 'Signup failed', err});
-    })
-  ;
-});
-
-
-app.post('/login', loggedOut, (req, res) => {
-  login(req.body)
-    .then(({token, user, projects}) => res.send({
-      token,
-      user: omit(user, 'password'),
-      projects
-    }))
-    .catch(() => {
-      res.status(400).send({err: 'login failed'});
-    })
-  ;
-});
-
-app.get('/logout', loggedIn, (req, res) => {
-  logout(req.authKey).then(() => res.send({msg: 'logged out'}));
-});
-
-*/

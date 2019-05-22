@@ -6,14 +6,17 @@ require('dotenv').config();
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
-const errorhandler = require('errorhandler');
+const errorHandler = require('errorhandler');
 const cors = require('cors');
 
+const {
+  NODE_ENV,
+  APP_HOST,
+  APP_PORT,
+  APP_BASE_URL,
+} = process.env;
 
 const { printIp, handleAsyncExceptions } = require('./util');
-
-const config = require('../config/server');
 
 function run() {
   const app = express();
@@ -21,55 +24,37 @@ function run() {
   app.use(morgan('dev'));
 
   app.use(helmet()); // https://helmetjs.github.io/docs/
-  // app.use(helmet.hidePoweredBy())
+  app.use(helmet.hidePoweredBy());
 
   app.set('root', `${__dirname}/..`);
 
-  // parse application/x-www-form-urlencoded
-  app.use(bodyParser.urlencoded({ extended: true }));
-  // parse application/json
-  app.use(bodyParser.json({ limit: '50mb' }));
-  // enable cors
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true }));
   app.use(cors());
+  app.set('baseUrl', APP_BASE_URL);
 
-  switch (process.env.NODE_ENV) {
+  switch (NODE_ENV) {
     case 'production':
       // trust proxy in production from local nginx front server
       app.set('trust proxy', 'loopback');
-
-      // enable cors in dev
-      app.use(cors());
-
-      // set the base uri
-      app.set('baseUrl', config.baseUrl);
-
-      // mount the routes
       app.use('/api/v1', routes);
 
       // mount server cluster
       /*
-      cluster(worker => app.listen(config.port, config.host, () => {
+      TODO: Implement Clustering logic like here: https://medium.com/tech-tajawal/clustering-in-nodejs-utilizing-multiple-processor-cores-75d78aeb0f4f
+      cluster(worker => app.listen(APP_PORT, APP_HOST, () => {
         console.log(`worker ${worker.id} online`);
       }));
       */
       break;
 
     default:
-      // enable cors in dev
-      app.use(cors());
-
-      // handle errors and send them back to browser
-      app.use(errorhandler());
-
-      // set the base uri
-      app.set('baseUrl', config.baseUrl);
-
-      // mount the routes
       app.use('/api/v1', routes);
+      app.use(errorHandler());
 
-      // mount server
-      app.listen(config.port, config.host, () => {
-        console.log(`app running on http://${config.host}:${config.port}`);
+      app.listen(APP_PORT, APP_HOST, () => {
+        // eslint-disable-next-line no-console
+        console.log(`App running on http://${APP_HOST}:${APP_PORT}`);
         printIp();
       });
       break;

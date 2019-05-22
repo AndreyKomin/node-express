@@ -18,13 +18,13 @@ function authInstagramUser(code, options) {
       oauth2.getOAuthAccessToken(
         code,
         options,
-        (e, accessToken, refreshToken, response) => {
-          if (e) {
-            reject(e);
+        (error, accessToken, refreshToken, response) => {
+          if (error) {
+            reject(error);
           }
 
           resolve({
-            e, accessToken, refreshToken, response,
+            error, accessToken, refreshToken, response,
           });
         },
       );
@@ -47,8 +47,8 @@ export default async function (code, redirectUri) {
 
   const { user } = response;
 
-  if (!error) {
-    return Promise.reject(error);
+  if (error) {
+    throw new Error(error);
   }
 
   const [
@@ -68,19 +68,19 @@ export default async function (code, redirectUri) {
     },
   );
 
-  if (userData) {
-    const token = jwt.sign(user, TOKEN_SECRET);
-
-    return {
-      accessToken: token,
-      user: {
-        isNew: created,
-        id: userData.dataValues.id,
-        firstName: userData.dataValues.firstName,
-        avatar: userData.dataValues.avatar,
-      },
-    };
+  if (userData && !userData.dataValues) {
+    throw new Error('User creation/sign up error');
   }
 
-  return Promise.reject();
+  const token = jwt.sign(user, TOKEN_SECRET);
+
+  return {
+    accessToken: token,
+    user: {
+      isNew: created,
+      id: userData.dataValues.id,
+      firstName: userData.dataValues.firstName,
+      avatar: userData.dataValues.avatar,
+    },
+  };
 }

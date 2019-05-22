@@ -28,7 +28,8 @@ module.exports = {
     "node/no-unsupported-features/es-syntax": ["error", {
       "version": ">=10.15.3",
       "ignores": ['modules']
-    }]
+    }],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }]
   },
   "settings": {
     "import/resolver": {

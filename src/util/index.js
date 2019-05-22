@@ -21,9 +21,11 @@ function printIp() {
 
       if (alias >= 1) {
         // this single interface has multiple ipv4 addresses
+        // eslint-disable-next-line no-console
         console.log(`${ifname}:${alias}`, iface.address);
       } else {
         // this interface has only one ipv4 adress
+        // eslint-disable-next-line no-console
         console.log(ifname, iface.address);
       }
       alias += 1;
@@ -81,12 +83,20 @@ async function createPassword(length, chars = 'abcdefghijklmnopqrstuvwxyzABCDEFG
     const randomBytes = crypto.randomBytes(length);
     const result = new Array(length);
     let cursor = 0;
-    for (let i = 0; i < length; i += 1) {
+    for (let i = 0; i < length; i++) {
       cursor += randomBytes[i];
       result[i] = chars[cursor % charsLength];
     }
     resolve(result.join(''));
   });
+}
+
+function wrapAsync(fn) {
+  return (req, res, next) => {
+    // Make sure to `.catch()` any errors and pass them along to the `next()`
+    // middleware in the chain, in this case the error handler.
+    fn(req, res, next).catch(next);
+  };
 }
 
 module.exports = {
@@ -95,4 +105,5 @@ module.exports = {
   batchReduce,
   // sendEmail,
   createPassword,
+  wrapAsync,
 };
