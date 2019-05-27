@@ -40,8 +40,6 @@ export default async function (code, redirectUri) {
 
   const {
     error,
-    // accessToken,
-    // refreshToken,
     response,
   } = await authInstagramUser(code, options);
 

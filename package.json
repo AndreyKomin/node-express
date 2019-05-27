@@ -5,7 +5,8 @@
   "main": "src/app.js",
   "scripts": {
     "start": "pm2 start src/app.js --watch --interpreter ./node_modules/.bin/babel-node",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "sequelize": "npx sequelize-cli"
   },
   "repository": {
     "type": "git",
@@ -41,7 +42,8 @@
     "pg": "^7.10.0",
     "pg-hstore": "^2.3.2",
     "sequelize": "^5.8.5",
-    "sequelize-cli": "^5.4.0"
+    "sequelize-cli": "^5.4.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
