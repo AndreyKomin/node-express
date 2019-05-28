@@ -1,5 +1,6 @@
 import 'src/apps/auth/services/checkAuth';
 import routes from './router';
+import 'src/db';
 
 require('dotenv').config();
 // const cluster = require('express-cluster');

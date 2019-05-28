@@ -1,15 +1,19 @@
 import jwt from 'jsonwebtoken';
 import OAuth from 'oauth';
-import models from 'db/models';
+import { User } from 'src/db/models';
+import { INSTAGRAM } from 'src/config/authProviders';
 
-const { TOKEN_SECRET } = process.env;
-const { User } = models;
+import {
+  TOKEN_SECRET,
+  INSTAGRAM_CLIENT_ID,
+  INSTAGRAM_CLIENT_SECRET,
+} from 'src/config';
 
 function authInstagramUser(code, options) {
   const { OAuth2 } = OAuth;
   const oauth2 = new OAuth2(
-    process.env.INSTAGRAM_CLIENT_ID,
-    process.env.INSTAGRAM_CLIENT_SECRET,
+    INSTAGRAM_CLIENT_ID,
+    INSTAGRAM_CLIENT_SECRET,
     'https://api.instagram.com',
   );
 
@@ -32,7 +36,7 @@ function authInstagramUser(code, options) {
   );
 }
 
-export default async function (code, redirectUri) {
+const instagramAuth = async (code, redirectUri) => {
   const options = {
     grant_type: 'authorization_code',
     redirect_uri: redirectUri,
@@ -40,45 +44,69 @@ export default async function (code, redirectUri) {
 
   const {
     error,
+    accessToken,
+    refreshToken,
     response,
   } = await authInstagramUser(code, options);
 
-  const { user } = response;
+  const { user: instagramUser } = response;
 
   if (error) {
     throw new Error(error);
   }
 
-  const [
-    userData,
-    created,
-  ] = await User.findOrCreate(
-    {
-      where: {
-        instagramId: user.id,
-      },
-      defaults: {
-        firstName: user.displayName,
-        instagramId: user.id,
-        instagramUsername: user.username,
-        avatar: user.profile_picture,
-      },
-    },
-  );
+  const queryFindUser = {
+    'auth.providers.name': INSTAGRAM,
+    'auth.providers.userId': instagramUser.id,
+  };
 
-  if (userData && !userData.dataValues) {
-    throw new Error('User creation/sign up error');
+  let user = await User.findOne(queryFindUser).exec();
+  let isNew = false;
+
+  if (user === null) {
+    const newUser = {
+      fullName: instagramUser.full_name,
+      avatar: instagramUser.profile_picture,
+      auth: {
+        providers: [
+          {
+            name: INSTAGRAM,
+            userId: instagramUser.id,
+            username: instagramUser.username,
+            accessToken,
+            refreshToken,
+          },
+        ],
+      },
+    };
+
+    user = await User.create(newUser);
+    isNew = true;
   }
 
-  const token = jwt.sign(user, TOKEN_SECRET);
+  const {
+    _id: id,
+    fullName,
+    avatar,
+    role,
+  } = user;
+
+  const userPayload = {
+    id,
+    role,
+  };
+
+  const token = jwt.sign(userPayload, TOKEN_SECRET);
 
   return {
     accessToken: token,
     user: {
-      isNew: created,
-      id: userData.dataValues.id,
-      firstName: userData.dataValues.firstName,
-      avatar: userData.dataValues.avatar,
+      isNew,
+      ...userPayload,
+      fullName,
+      avatar,
     },
   };
-}
+};
+
+export default instagramAuth;
