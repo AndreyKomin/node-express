@@ -2,6 +2,8 @@ import 'src/apps/auth/services/checkAuth';
 import routes from './router';
 import 'src/db';
 
+import { printIp, handleAsyncExceptions } from './utils';
+
 require('dotenv').config();
 // const cluster = require('express-cluster');
 const express = require('express');
@@ -16,8 +18,6 @@ const {
   APP_PORT,
   APP_BASE_URL,
 } = process.env;
-
-const { printIp, handleAsyncExceptions } = require('./util');
 
 function run() {
   const app = express();

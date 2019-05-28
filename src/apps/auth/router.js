@@ -1,12 +1,11 @@
 import express from 'express';
-import { wrapAsync } from 'src/util';
-import expressJoi from 'express-joi-validator';
 import Joi from 'joi';
+import { validateRequest, wrapAsync } from 'src/middlewares';
 import { instagramAuth } from './services';
 
 const app = express();
 
-const bodySchema = {
+const schema = {
   body: {
     clientId: Joi.string().required(),
     redirectUri: Joi.string().required(),
@@ -14,7 +13,7 @@ const bodySchema = {
   },
 };
 
-app.post('/instagram', expressJoi(bodySchema), wrapAsync(async (req, res) => {
+app.post('/instagram', validateRequest(schema), wrapAsync(async (req, res) => {
   const { code, redirectUri } = req.body;
 
   const response = await instagramAuth(code, redirectUri);
