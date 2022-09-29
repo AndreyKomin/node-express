@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@hapi/joi": "^15.0.3",
+    "@hapi/joi": "^15.1.1",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "errorhandler": "^1.5.0",
